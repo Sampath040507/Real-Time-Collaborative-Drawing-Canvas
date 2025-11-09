@@ -1,0 +1,48 @@
+{
+  "name": "collaborative-canvas",
+  "version": "1.0.0",
+  "description": "Real-time collaborative drawing canvas with WebSocket synchronization",
+  "keywords": [
+    "canvas",
+    "drawing",
+    "websocket",
+    "real-time",
+    "collaboration"
+  ],
+  "license": "MIT",
+  "author": "",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "node server/server.js",
+    "start": "node server/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bufferutil": "latest",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "express": "latest",
+    "fs": "0.0.1-security",
+    "http": "latest",
+    "lucide-react": "^0.454.0",
+    "next": "16.0.1",
+    "path": "latest",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
+    "url": "latest",
+    "utf-8-validate": "latest",
+    "ws": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "nodemon": "^2.0.22",
+    "postcss": "^8.5",
+    "tailwindcss": "4.1.17",
+    "typescript": "^5"
+  }
+}

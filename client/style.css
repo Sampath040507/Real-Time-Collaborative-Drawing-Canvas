@@ -1,0 +1,269 @@
+/* this css file defines how everything in the collaborative drawing app looks and feels.
+its the part responsible for colors, layout, spacing, and the general visual tone of the interface.
+javascript handles functionality, but css makes the whole experience actually enjoyable to look at. */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* here we define global color variables that we can reuse everywhere.
+   by keeping colors here, we can change the app’s entire look just by tweaking these values.
+   darker backgrounds were chosen so that the white drawing canvas pops nicely in contrast. */
+:root {
+  --primary-bg: #0f172a;
+  --secondary-bg: #1e293b;
+  --accent: #4ecdc4;
+  --text: #f1f5f9;
+  --muted: #cbd5e1;
+  --border: #334155;
+  --danger: #ef4444;
+}
+
+/* this styles the main body. we set a readable system font stack and a dark background color.
+   overflow is hidden because we don't want the entire page to scroll — everything fits in one screen. */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  background: var(--primary-bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* the container uses flexbox so that the sidebar and canvas area sit side by side,
+   filling the screen from top to bottom. */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* this sidebar holds all user controls like brush, eraser, colors, etc.
+   it’s on the left and has a fixed width and scrolls independently if content overflows. */
+.sidebar {
+  width: 280px;
+  background: var(--secondary-bg);
+  padding: 20px;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+/* this header is the title text "Canvas Tools". 
+   it uses the accent color and uppercase style for a small but clean branding touch. */
+.sidebar h1 {
+  color: var(--accent);
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+}
+
+/* each section in the sidebar like brush or color picker is visually separated 
+   with padding and a subtle border line underneath. */
+.tool-section {
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* this area displays whether a user is connected or disconnected from the websocket server.
+   background and text colors shift depending on state for visual clarity. */
+.connection-status {
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 14px;
+  color: var(--muted);
+  background: rgba(78, 205, 196, 0.06);
+}
+
+/* green tone indicates successful connection — 
+   this gives a calm and safe signal to the user. */
+.connection-status.connected {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.06);
+}
+
+/* red tone means websocket connection failed or was manually disconnected,
+   giving a clear alert state. */
+.connection-status.disconnected {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+/* these are shared styles for all sidebar buttons (brush, eraser, undo, etc.).
+   they have rounded corners and a minimal modern look with transparent background. */
+.tool-btn,
+.history-btn,
+.clear-btn {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+/* when a tool is selected, we highlight it using the accent color background.
+   this visually shows which tool is active at the moment. */
+.tool-btn.active {
+  background: var(--accent);
+  color: var(--primary-bg);
+  border-color: var(--accent);
+}
+
+/* hover effects help give a responsive feel when a user moves their mouse over buttons. */
+.tool-btn:hover,
+.history-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(78, 205, 196, 0.04);
+}
+
+/* the color picker is the box that lets users select any color for their brush.
+   we styled it slightly so it blends nicely into the sidebar theme. */
+.color-picker {
+  width: 100%;
+  height: 48px;
+  border-radius: 6px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+/* the brush and eraser width sliders take up the full sidebar width.
+   they’re standard HTML range inputs styled to align neatly. */
+.width-slider {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+/* the small pixel value shown under the slider uses a muted gray tone
+   to match the rest of the sidebar design. */
+#widthDisplay {
+  display: block;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* the "clear all" button is colored differently (red tone)
+   because its action is more destructive and affects everyone. */
+.clear-btn {
+  background: rgba(239, 68, 68, 0.06);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+/* the user list area inside the sidebar shows all connected users.
+   it’s scrollable and limited to a fixed height so it doesn’t overflow too much. */
+.user-list {
+  max-height: 220px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+/* each user in the list has a small rectangular tag with a colored border
+   that corresponds to their personal drawing color. */
+.user-item {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: rgba(78, 205, 196, 0.04);
+  border-left: 4px solid var(--accent);
+  border-radius: 4px;
+  color: var(--muted);
+}
+
+/* this section defines the right-hand canvas area.
+   it uses flexbox to center the canvas element both vertically and horizontally. */
+.canvas-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: var(--primary-bg);
+}
+
+/* the actual HTML canvas takes up full space inside its container.
+   a faint inner shadow gives it a “whiteboard” effect. */
+#canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+  background: white;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.12);
+}
+
+/* the modal backdrop covers the entire viewport and dims everything when asking for a user name. */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+/* this is the white modal box itself.
+   its small, rounded, centered, and designed to stand out from the dark background. */
+.modal {
+  background: white;
+  color: #0b1220;
+  padding: 20px;
+  border-radius: 8px;
+  width: 320px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+/* input field for typing name: styled simply for clarity and alignment. */
+.modal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 12px;
+}
+
+/* this section groups the buttons inside the modal and centers them horizontally. */
+.modal-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* the main "join" button uses accent color to attract attention.
+   rounded edges match the rest of the app’s smooth visual style. */
+.modal button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  background: var(--accent);
+  color: white;
+}
+
+/* small description text below input for friendly user guidance. */
+.modal-note {
+  margin-top: 10px;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+/* makes the connection-status label interactive,
+   allowing the user to manually toggle between connected/disconnected. */
+.connection-status {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* subtle brightness increase when hovering over connection status,
+   just to provide slight feedback that it’s clickable. */
+.connection-status:hover {
+  filter: brightness(1.2);
+}

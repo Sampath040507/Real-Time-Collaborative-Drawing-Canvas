@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--this html file sets up the main structure of our collaborative drawing app. 
+it doesn't do any logic by itself — that's handled by javascript — but it lays out all the UI elements that users interact with.
+so basically, think of this file as the skeleton or stage on which all canvas actions take place.-->
+
+<html lang="en">
+<head>
+  <!--this is standard meta setup that ensures proper character encoding and responsiveness.
+  without the viewport line, the app wouldn't scale properly on phones or tablets.-->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!--the page title shows up in the browser tab and helps identify the app.-->
+  <title>Collaborative Drawing Canvas</title>
+
+  <!--linking our external css file which handles the styling and layout of every visual component.-->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!--everything in this app is wrapped inside one big container.
+  inside it, there are two main parts: the sidebar (tools, colors, buttons) and the main canvas area where actual drawing happens.-->
+  <div class="container">
+
+    <!--this section is the sidebar. it holds tools like brush, eraser, undo/redo, etc.-->
+    <aside class="sidebar">
+      <!--the header here simply gives a label to the tools panel.-->
+      <h1>Canvas Tools</h1>
+
+      <!--this section shows the current connection status.
+      it will display text like "Connected" or "Disconnected" dynamically depending on websocket connection.-->
+      <div id="connectionStatus" class="connection-status">Connecting...</div>
+
+      <!--first section: tool selection buttons for brush and eraser.
+      they are simple buttons styled with css, and their active/inactive states are toggled using javascript.-->
+      <div class="tool-section">
+        <h3>Drawing Tools</h3>
+        <button id="brushTool" class="tool-btn active" title="Brush">Brush</button>
+        <button id="eraserTool" class="tool-btn" title="Eraser">Eraser</button>
+      </div>
+
+      <!--next, we provide color control using a color picker input.
+      the javascript listens to changes here to update the brush color instantly.-->
+      <div class="tool-section">
+        <h3>Color</h3>
+        <input id="colorPicker" type="color" value="#000000" class="color-picker" />
+      </div>
+
+      <!--this section lets the user adjust the brush stroke width with a range slider.
+      we also display the selected pixel size using an <output> element next to it.-->
+      <div class="tool-section">
+        <h3>Brush Size</h3>
+        <input id="brushWidth" type="range" min="1" max="30" value="4" class="width-slider" />
+        <output id="brushWidthDisplay">4px</output>
+      </div>
+
+      <!--same concept as brush size but for eraser width.
+      users can control how thick or thin the eraser should be while removing strokes.-->
+      <div class="tool-section">
+        <h3>Eraser Size</h3>
+        <input id="eraserWidth" type="range" min="5" max="60" value="10" class="width-slider" />
+        <output id="eraserWidthDisplay">10px</output>
+      </div>
+
+      <!--undo, redo, and clear are placed together under "history".
+      these affect global state, meaning they update everyone’s view through websocket sync.-->
+      <div class="tool-section">
+        <h3>History</h3>
+        <button id="undoBtn" class="history-btn">Undo</button>
+        <button id="redoBtn" class="history-btn">Redo</button>
+        <button id="clearBtn" class="clear-btn">Clear All</button>
+      </div>
+
+      <!--this last block in the sidebar lists online users dynamically.
+      whenever someone joins or leaves, this list updates instantly to reflect that change.-->
+      <div class="tool-section">
+        <h3>Online Users</h3>
+        <div id="userList" class="user-list"></div>
+      </div>
+    </aside>
+
+    <!--the main part of the layout: this is where the actual drawing happens.
+    it holds the canvas element where all brush and eraser actions appear in real time.-->
+    <main class="canvas-area">
+      <canvas id="canvas"></canvas>
+    </main>
+  </div>
+
+  <!--this modal pops up right when the app loads.
+  it asks the user for a display name before connecting them to the websocket server.-->
+  <div id="nameModal" class="modal-backdrop">
+    <div class="modal">
+      <h2>What's your name?</h2>
+
+      <!--simple text input for user to enter their name, which is stored locally and shared with others in the room.-->
+      <input id="nameInput" type="text" placeholder="Enter display name" />
+
+      <div class="modal-actions">
+        <button id="nameSubmit">Join</button>
+      </div>
+
+      <!--this is just a small note under the input to clarify that the entered name will be visible to everyone.-->
+      <p class="modal-note">This name will be visible to other users in the room.</p>
+    </div>
+  </div>
+
+  <!--finally, our main javascript module that initializes everything and handles all real-time logic.
+  note that we’re using ES module syntax here so that we can import the DrawingCanvas class from canvas.js.-->
+  <script type="module" src="websocket.js"></script>
+</body>
+</html>
